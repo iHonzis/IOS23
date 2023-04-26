@@ -14,6 +14,7 @@
 #include <sys/sem.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/time.h>
 
 //TODO přidat na konci -Werror do Makefile
 
@@ -63,17 +64,44 @@ static int cekani = 0;
 static int prestavka = 0;
 static int otviracka = 0;
 
+struct timeval cas;
+
+
 void zakaznik(int i){
-            spanek(cekani);
+            //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: Z %d: started\n", (*linecount)++, i+1);
             fflush(file);
             sem_post(semafor);
 
+            spanek(cekani);
+            struct timeval cas2;
+            gettimeofday(&cas2, NULL);
+
+            //TODO dělá brikule - stejný service
+            if(cas2.tv_usec + cas2.tv_sec*1000000 < cas.tv_usec + cas.tv_sec*1000000  + otviracka*1000){
+                int random = rand()%3 + 1;
+                sem_wait(semafor);
+                fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
+                fflush(file);
+                sem_post(semafor);
+                return;
+
+            }
+            else{
+                sem_wait(semafor);
+                fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
+                fflush(file);
+                sem_post(semafor);
+                return;
+            }
+
+
+
 }
 
 void urednik(int i){
-            spanek(cekani);
+            //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: U %d: started\n",(*linecount)++, i+1);
             fflush(file);
@@ -150,6 +178,10 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
 
+    //timestamp ifpred dobou zavreni
+    // timeval < timeval plus otviracka
+    gettimeofday(&cas, NULL);
+    //printf("%ld", cas.tv_usec);//plus otviracka
     pid_t pid = fork();
     if(pid == 0){
         for(int i = 0; i < zakaznici; i++){
