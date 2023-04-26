@@ -29,9 +29,9 @@ void shared(){
 
     semafor = sem_open("/xhesja00", O_CREAT | O_EXCL, 0666, 1);
 
-    radky = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    //radky = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
-    radky = sem_open("/xhesja00-2", O_CREAT | O_EXCL, 0666, 1);
+    //radky = sem_open("/xhesja00-2", O_CREAT | O_EXCL, 0666, 1);
 
     linecount = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     *linecount = 1;
@@ -63,27 +63,21 @@ static int cekani = 0;
 static int prestavka = 0;
 static int otviracka = 0;
 
-void zakaznik(int i, int *linecount){
+void zakaznik(int i){
             spanek(cekani);
             sem_wait(semafor);
-            sem_wait(radky);
-            fprintf(file, "%d: Z %d: started\n", *linecount, i+1);
+            fprintf(file, "%d: Z %d: started\n", (*linecount)++, i+1);
             fflush(file);
-            (*linecount)++;
-            sem_post(radky);
             sem_post(semafor);
 
 }
 
-void urednik(int i, int *linecount){
+void urednik(int i){
             spanek(cekani);
-            sem_post(semafor);
-            sem_post(radky);
-            fprintf(file, "%d: U %d: started\n", *linecount, i+1);
-            fflush(file);
-            (*linecount)++;
-            sem_wait(radky);
             sem_wait(semafor);
+            fprintf(file, "%d: U %d: started\n",(*linecount)++, i+1);
+            fflush(file);
+            sem_post(semafor);
 
 }
 
@@ -161,7 +155,7 @@ int main(int argc, char *argv[]) {
         for(int i = 0; i < zakaznici; i++){
             pid_t zak = fork();
             if(zak == 0){
-                zakaznik(i, linecount);
+                zakaznik(i);
                 exit(0);
             }
             else if(zak < 0){
@@ -175,7 +169,7 @@ int main(int argc, char *argv[]) {
         for(int i = 0; i < urednici; i++){
             pid_t ured = fork();
             if(ured == 0){
-                urednik(i, linecount);
+                urednik(i);
                 exit(0);
             }
             else if(ured < 0){
@@ -183,6 +177,7 @@ int main(int argc, char *argv[]) {
                 exit (1);
             }
         }
+        cleanup();
         exit(0);
     }
     else if(pid < 0){
