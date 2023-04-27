@@ -25,6 +25,9 @@ sem_t *q3;
 int *linecount = NULL;
 int *customer = NULL;
 int *officer = NULL;
+int *fr1 = NULL;
+int *fr2 = NULL;
+int *fr3 = NULL;
 FILE *file;
 
 void shared(){
@@ -46,6 +49,15 @@ void shared(){
     *customer = 1;
     officer = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     *officer = 1;
+
+    fr1 = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    *fr1 = 0;
+
+    fr2 = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    *fr2 = 0;
+
+    fr3 = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    *fr3 = 0;
 }
 
 void spanek(int cekani){
@@ -96,6 +108,18 @@ void zakaznik(int i, int random){
                 fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                 fflush(file);
                 sem_post(semafor);
+                if(random == 1){
+                    sem_post(q1);
+                    (*fr1)++;
+                }
+                else if(random == 2){
+                    sem_post(q2);
+                    (*fr2)++;
+                }
+                else if(random == 3){
+                    sem_post(q3);
+                    (*fr3)++;
+                } //TODO FIX LOGIKA
                 return;
 
             }
@@ -108,13 +132,41 @@ void zakaznik(int i, int random){
             }
 }
 
-void urednik(int i){
+void urednik(int i, int random2){
             //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: U %d: started\n",(*linecount)++, i+1);
             fflush(file);
             sem_post(semafor);
 
+            //nějaký začátek cyklu, TODO nečekají na zákazníka
+            if (random2 == 1){
+                if(fr1 != NULL){
+                    sem_wait(semafor);
+                    fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
+                    fflush(file);
+                    sem_post(semafor);
+                    (*fr1)--;
+                }
+            }
+            else if(random2 == 2){
+                if(fr2 != NULL){
+                    sem_wait(semafor);
+                    fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
+                    fflush(file);
+                    sem_post(semafor);
+                    (*fr2)--;
+                }
+            }
+            else if(random2 == 3){
+                if(fr3 != NULL){
+                    sem_wait(semafor);
+                    fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
+                    fflush(file);
+                    sem_post(semafor);
+                    (*fr3)--;
+                }
+            }
 }
 
 
@@ -209,8 +261,9 @@ int main(int argc, char *argv[]) {
     else if(pid > 0){
         for(int i = 0; i < urednici; i++){
             pid_t ured = fork();
+            int random2 = rand()%3 + 1;
             if(ured == 0){
-                urednik(i);
+                urednik(i, random2);
                 exit(0);
             }
             else if(ured < 0){
