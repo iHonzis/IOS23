@@ -19,7 +19,9 @@
 //TODO přidat na konci -Werror do Makefile
 
 sem_t *semafor;
-sem_t *radky;
+sem_t *q1;
+sem_t *q2;
+sem_t *q3;
 int *linecount = NULL;
 int *customer = NULL;
 int *officer = NULL;
@@ -27,12 +29,16 @@ FILE *file;
 
 void shared(){
     semafor = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
     semafor = sem_open("/xhesja00", O_CREAT | O_EXCL, 0666, 1);
 
-    //radky = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    q1 = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    q1 = sem_open("/xhesja00-q1", O_CREAT | O_EXCL, 0666, 1);
 
-    //radky = sem_open("/xhesja00-2", O_CREAT | O_EXCL, 0666, 1);
+    q2 = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    q2 = sem_open("/xhesja00-q2", O_CREAT | O_EXCL, 0666, 1);
+
+    q3 = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    q3 = sem_open("/xhesja00-q3", O_CREAT | O_EXCL, 0666, 1);
 
     linecount = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     *linecount = 1;
@@ -48,13 +54,19 @@ void spanek(int cekani){
 
 void cleanup(){
     munmap(semafor, sizeof(sem_t));
-    munmap(radky, sizeof(sem_t));
+    munmap(q1, sizeof(sem_t));
+    munmap(q2, sizeof(sem_t));
+    munmap(q3, sizeof(sem_t));
 
     //deleting
     sem_close(semafor);
     sem_unlink("/xhesja00");
-    sem_close(radky);
-    sem_unlink("/xhesja00-2");
+    sem_close(q1);
+    sem_unlink("/xhesja00-q1");
+    sem_close(q2);
+    sem_unlink("/xhesja00-q2");
+    sem_close(q3);
+    sem_unlink("/xhesja00-q3");
 
 }
 
@@ -67,7 +79,7 @@ static int otviracka = 0;
 struct timeval cas;
 
 
-void zakaznik(int i){
+void zakaznik(int i, int random){
             //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: Z %d: started\n", (*linecount)++, i+1);
@@ -80,7 +92,6 @@ void zakaznik(int i){
 
             //TODO dělá brikule - stejný service
             if(cas2.tv_usec + cas2.tv_sec*1000000 < cas.tv_usec + cas.tv_sec*1000000  + otviracka*1000){
-                int random = rand()%3 + 1;
                 sem_wait(semafor);
                 fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                 fflush(file);
@@ -95,9 +106,6 @@ void zakaznik(int i){
                 sem_post(semafor);
                 return;
             }
-
-
-
 }
 
 void urednik(int i){
@@ -185,9 +193,10 @@ int main(int argc, char *argv[]) {
     pid_t pid = fork();
     if(pid == 0){
         for(int i = 0; i < zakaznici; i++){
+            int random = rand()%3 + 1;
             pid_t zak = fork();
             if(zak == 0){
-                zakaznik(i);
+                zakaznik(i, random);
                 exit(0);
             }
             else if(zak < 0){
