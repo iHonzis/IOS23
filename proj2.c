@@ -35,13 +35,13 @@ void shared(){
     semafor = sem_open("/xhesja00", O_CREAT | O_EXCL, 0666, 1);
 
     q1 = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    q1 = sem_open("/xhesja00-q1", O_CREAT | O_EXCL, 0666, 1);
+    q1 = sem_open("/xhesja00-q1", O_CREAT | O_EXCL, 0666, 0);
 
     q2 = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    q2 = sem_open("/xhesja00-q2", O_CREAT | O_EXCL, 0666, 1);
+    q2 = sem_open("/xhesja00-q2", O_CREAT | O_EXCL, 0666, 0);
 
     q3 = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    q3 = sem_open("/xhesja00-q3", O_CREAT | O_EXCL, 0666, 1);
+    q3 = sem_open("/xhesja00-q3", O_CREAT | O_EXCL, 0666, 0);
 
     linecount = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     *linecount = 1;
@@ -104,21 +104,36 @@ void zakaznik(int i, int random){
 
             //TODO dělá brikule - stejný service
             if(cas2.tv_usec + cas2.tv_sec*1000000 < cas.tv_usec + cas.tv_sec*1000000  + otviracka*1000){
-                sem_wait(semafor);
-                fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
-                fflush(file);
-                sem_post(semafor);
+
                 if(random == 1){
+                    //sem_wait(q1);
+                    sem_wait(semafor);
+                    fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
+                    fflush(file);
+                    (*customer) = i+1;
+                    sem_post(semafor);
                     sem_post(q1);
-                    (*fr1)++;
+                    //(*fr1)++;
                 }
                 else if(random == 2){
+                    //sem_wait(q2);
+                    sem_wait(semafor);
+                    fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
+                    fflush(file);
+                    (*customer) = i+1;
+                    sem_post(semafor);
                     sem_post(q2);
-                    (*fr2)++;
+                    //(*fr2)++;
                 }
                 else if(random == 3){
+                    //sem_wait(q3);
+                    sem_wait(semafor);
+                    fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
+                    fflush(file);
+                    (*customer) = i+1;
+                    sem_post(semafor);
                     sem_post(q3);
-                    (*fr3)++;
+                    //(*fr3)++;
                 } //TODO FIX LOGIKA
                 return;
 
@@ -142,7 +157,9 @@ void urednik(int i, int random2){
             //nějaký začátek cyklu, TODO nečekají na zákazníka
             if (random2 == 1){
                 if(fr1 != NULL){
+                    sem_wait(q1);
                     sem_wait(semafor);
+                    fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
                     fflush(file);
                     sem_post(semafor);
@@ -151,7 +168,9 @@ void urednik(int i, int random2){
             }
             else if(random2 == 2){
                 if(fr2 != NULL){
+                    sem_wait(q2);
                     sem_wait(semafor);
+                    fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
                     fflush(file);
                     sem_post(semafor);
@@ -160,7 +179,9 @@ void urednik(int i, int random2){
             }
             else if(random2 == 3){
                 if(fr3 != NULL){
+                    sem_wait(q3);
                     sem_wait(semafor);
+                    fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
                     fflush(file);
                     sem_post(semafor);
