@@ -160,7 +160,11 @@ void urednik(int i, int random2){
                     sem_wait(q1);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
+                    //TODO SPANEK
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
+                    //TODO SPANEK
+                    fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
+                    fprintf(file, "%d: Z %d: going home\n", (*linecount)++, (*customer));
                     fflush(file);
                     sem_post(semafor);
                     (*fr1)--;
@@ -171,7 +175,11 @@ void urednik(int i, int random2){
                     sem_wait(q2);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
+                    //TODO SPANEK
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
+                    //TODO SPANEK
+                    fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
+                    fprintf(file, "%d: Z %d: going home\n", (*linecount)++, (*customer));
                     fflush(file);
                     sem_post(semafor);
                     (*fr2)--;
@@ -182,7 +190,11 @@ void urednik(int i, int random2){
                     sem_wait(q3);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
+                    //TODO SPANEK
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
+                    //TODO SPANEK
+                    fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
+                    fprintf(file, "%d: Z %d: going home\n", (*linecount)++, (*customer));
                     fflush(file);
                     sem_post(semafor);
                     (*fr3)--;
