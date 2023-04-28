@@ -1,21 +1,21 @@
 1: U 1: started
 2: Z 1: started
 3: U 2: started
-4: U 3: started
-5: Z 2: started
-6: Z 3: started
-7: Z 2: entering office for a service 3
+4: Z 2: started
+5: Z 3: started
+6: U 3: started
+7: Z 2: entering office for a service 2
 8: Z 2: called by office worker
-9: U 2: serving a service of type 3
-10: U 2: service finished
-11: Z 2: going home
-12: Z 1: entering office for a service 2
-13: Z 1: called by office worker
-14: U 1: serving a service of type 2
-15: U 1: service finished
-16: Z 1: going home
-17: Z 3: entering office for a service 1
-18: Z 3: called by office worker
+9: U 1: serving a service of type 2
+10: Z 1: entering office for a service 2
+11: Z 1: called by office worker
+12: Z 3: entering office for a service 1
+13: Z 3: called by office worker
+14: U 2: serving a service of type 2
+15: U 2: service finished
+16: Z 3: going home
+17: U 1: service finished
+18: Z 3: going home
 19: U 3: serving a service of type 1
 20: U 3: service finished
 21: Z 3: going home

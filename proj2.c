@@ -160,10 +160,18 @@ void urednik(int i, int random2){
                     sem_wait(q1);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
-                    //TODO SPANEK
+                    sem_post(semafor);
+                    int pockej1 = rand() % 10+1;
+                    spanek(pockej1);
+                    sem_wait(semafor);
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
-                    //TODO SPANEK
+                    sem_post(semafor);
+                    int pockej = rand() % 10+1;
+                    spanek(pockej);
+                    sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
+                    sem_post(semafor);
+                    sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, (*customer));
                     fflush(file);
                     sem_post(semafor);
@@ -175,10 +183,18 @@ void urednik(int i, int random2){
                     sem_wait(q2);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
-                    //TODO SPANEK
+                    sem_post(semafor);
+                    int pockej = rand() % 10+1;
+                    spanek(pockej);
+                    sem_wait(semafor);
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
-                    //TODO SPANEK
+                    sem_post(semafor);
+                    int pockej2 = rand() % 10+1;
+                    spanek(pockej2);
+                    sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
+                    sem_post(semafor);
+                    sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, (*customer));
                     fflush(file);
                     sem_post(semafor);
@@ -190,10 +206,18 @@ void urednik(int i, int random2){
                     sem_wait(q3);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
-                    //TODO SPANEK
+                    sem_post(semafor);
+                    int pockej = rand() % 10+1;
+                    spanek(pockej);
+                    sem_wait(semafor);
                     fprintf(file, "%d: U %d: serving a service of type %d\n",(*linecount)++, i+1, random2);
-                    //TODO SPANEK
+                    sem_post(semafor);
+                    int pockej3 = rand() % 10+1;
+                    spanek(pockej3);
+                    sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
+                    sem_post(semafor);
+                    sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, (*customer));
                     fflush(file);
                     sem_post(semafor);
