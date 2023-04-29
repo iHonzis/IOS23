@@ -102,8 +102,11 @@ void zakaznik(int i, int random){
             struct timeval cas2;
             gettimeofday(&cas2, NULL);
 
-            //TODO dělá brikule - stejný service
-            if(cas2.tv_usec + cas2.tv_sec*1000000 < cas.tv_usec + cas.tv_sec*1000000  + otviracka*1000){
+            long int elapsed_time = (cas2.tv_sec - cas.tv_sec) * 1000 + (cas2.tv_usec - cas.tv_usec) / 1000; // calculate elapsed time in milliseconds
+
+
+
+            if(elapsed_time < otviracka*1000){
 
                 if(random == 1){
                     //sem_wait(q1);
@@ -328,6 +331,14 @@ int main(int argc, char *argv[]) {
                 exit (1);
             }
         }
+
+    int pulka = otviracka/2;
+    int open = pulka + rand()%(otviracka - pulka + 1);
+    usleep(open*1000); //usleep v milisekundách
+    sem_wait(semafor);
+    fprintf(file, "%d: closing\n", (*linecount)++);
+    sem_post(semafor);
+
         cleanup();
         exit(0);
     }
