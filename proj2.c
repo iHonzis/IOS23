@@ -38,7 +38,7 @@ int *fr3 = NULL;
 FILE *file;
 bool *otevreno = NULL;
 
-void shared(){
+void shared(void){
     semafor = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     semafor = sem_open("/xhesja00", O_CREAT | O_EXCL, 0666, 1);
 
@@ -96,7 +96,7 @@ void spanek(int cekani){
         usleep( (rand()%(cekani+1)) *1000);
     }
 
-void cleanup(){
+void cleanup(void){
     munmap(semafor, sizeof(sem_t));
     munmap(q1, sizeof(sem_t));
     munmap(qq1, sizeof(sem_t));
@@ -360,7 +360,7 @@ void urednik(int i, int random2){
 
             }
 
-            //TODO všichni a pauza
+            //TODO pauza
             sem_wait(q4);
             for(int i = (*officer); i > 0; i--){
                 sem_wait(semafor);
