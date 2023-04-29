@@ -151,6 +151,7 @@ void zakaznik(int i, int random){
             fflush(file);
             sem_post(semafor);
 
+            (*officer) = urednici;
 
             struct timeval cas2;
             gettimeofday(&cas2, NULL);
@@ -290,7 +291,7 @@ void urednik(int i, int random2){
             fflush(file);
             sem_post(semafor);
 
-            do
+            while(1)
             {
                 //nějaký začátek cyklu
             if (random2 == 1){
@@ -352,15 +353,20 @@ void urednik(int i, int random2){
                     (*customer)--;
                     }
                 }
+                if((*customer) == 0){
+                    break;
+                }
             }
 
-            } while ((*customer) != 0);
+            }
 
-
+            //TODO všichni a pauza
             sem_wait(q4);
-            sem_wait(semafor);
-                fprintf(file, "%d: U %d: going home\n", (*linecount)++, i+1);
+            for(int i = (*officer); i > 0; i--){
+                sem_wait(semafor);
+                fprintf(file, "%d: U %d: going home\n", (*linecount)++, i);
             sem_post(semafor);
+            }
             sem_post(q4);
 }
 
