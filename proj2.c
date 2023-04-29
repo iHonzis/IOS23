@@ -29,6 +29,7 @@ int *fr1 = NULL;
 int *fr2 = NULL;
 int *fr3 = NULL;
 FILE *file;
+bool *otevreno = NULL;
 
 void shared(){
     semafor = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -58,6 +59,9 @@ void shared(){
 
     fr3 = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     *fr3 = 0;
+
+    otevreno = mmap(NULL, sizeof(bool), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    *otevreno = true;
 }
 
 void spanek(int cekani){
@@ -109,6 +113,7 @@ void zakaznik(int i, int random){
             if(elapsed_time < otviracka*1000){
 
                 if(random == 1){
+                    if (*otevreno == true){
                     //sem_wait(q1);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
@@ -117,8 +122,10 @@ void zakaznik(int i, int random){
                     sem_post(semafor);
                     sem_post(q1);
                     //(*fr1)++;
+                    }
                 }
                 else if(random == 2){
+                    if (*otevreno == true){
                     //sem_wait(q2);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
@@ -127,8 +134,10 @@ void zakaznik(int i, int random){
                     sem_post(semafor);
                     sem_post(q2);
                     //(*fr2)++;
+                    }
                 }
                 else if(random == 3){
+                    if (*otevreno == true){
                     //sem_wait(q3);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
@@ -137,7 +146,8 @@ void zakaznik(int i, int random){
                     sem_post(semafor);
                     sem_post(q3);
                     //(*fr3)++;
-                } //TODO FIX LOGIKA
+                    } //TODO FIX LOGIKA
+                }
                 return;
 
             }
@@ -160,6 +170,7 @@ void urednik(int i, int random2){
             //nějaký začátek cyklu, TODO nečekají na zákazníka
             if (random2 == 1){
                 if(fr1 != NULL){
+                    if(*otevreno == true){
                     sem_wait(q1);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
@@ -179,10 +190,12 @@ void urednik(int i, int random2){
                     fflush(file);
                     sem_post(semafor);
                     (*fr1)--;
+                    }
                 }
             }
             else if(random2 == 2){
                 if(fr2 != NULL){
+                    if (*otevreno == true){
                     sem_wait(q2);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
@@ -202,10 +215,12 @@ void urednik(int i, int random2){
                     fflush(file);
                     sem_post(semafor);
                     (*fr2)--;
+                    }
                 }
             }
             else if(random2 == 3){
                 if(fr3 != NULL){
+                    if (*otevreno == true){
                     sem_wait(q3);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, (*customer));
@@ -225,6 +240,7 @@ void urednik(int i, int random2){
                     fflush(file);
                     sem_post(semafor);
                     (*fr3)--;
+                    }
                 }
             }
 }
@@ -338,6 +354,7 @@ int main(int argc, char *argv[]) {
     sem_wait(semafor);
     fprintf(file, "%d: closing\n", (*linecount)++);
     sem_post(semafor);
+    *otevreno = false;
 
         cleanup();
         exit(0);
