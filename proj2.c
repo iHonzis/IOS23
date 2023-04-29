@@ -107,6 +107,7 @@ void cleanup(){
     munmap(q3, sizeof(sem_t));
     munmap(qq3, sizeof(sem_t));
     munmap(qqq3, sizeof(sem_t));
+    munmap(q4, sizeof(sem_t));
 
     //deleting
     sem_close(semafor);
@@ -176,7 +177,7 @@ void zakaznik(int i, int random){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     //fflush(file);
-                    (*customer) = i+1;
+                    //(*customer) = i+1;
                     sem_post(semafor);
                     sem_post(q1);
                     (*fr1)++;
@@ -209,7 +210,7 @@ void zakaznik(int i, int random){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
-                    (*customer) = i+1;
+                    //(*customer) = i+1;
                     sem_post(semafor);
                     sem_post(q2);
                     (*fr2)++;
@@ -242,7 +243,7 @@ void zakaznik(int i, int random){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
-                    (*customer) = i+1;
+                    //(*customer) = i+1;
                     sem_post(semafor);
                     sem_post(q3);
                     (*fr3)++;
@@ -289,7 +290,9 @@ void urednik(int i, int random2){
             fflush(file);
             sem_post(semafor);
 
-            //nějaký začátek cyklu
+            do
+            {
+                //nějaký začátek cyklu
             if (random2 == 1){
                 if(fr1 != 0){
                     if(*otevreno == true){
@@ -306,6 +309,7 @@ void urednik(int i, int random2){
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
                     sem_post(semafor);
+                    (*customer)--;
                     }
                 }
             }
@@ -325,6 +329,7 @@ void urednik(int i, int random2){
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
                     sem_post(semafor);
+                    (*customer)--;
                     }
                 }
             }
@@ -344,9 +349,14 @@ void urednik(int i, int random2){
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished\n", (*linecount)++, i+1);
                     sem_post(semafor);
+                    (*customer)--;
                     }
                 }
             }
+
+            } while ((*customer) != 0);
+
+
             sem_wait(q4);
             sem_wait(semafor);
                 fprintf(file, "%d: U %d: going home\n", (*linecount)++, i+1);
@@ -425,6 +435,7 @@ int main(int argc, char *argv[]) {
     // timeval < timeval plus otviracka
     gettimeofday(&cas, NULL);
     //printf("%ld", cas.tv_usec);//plus otviracka
+    (*customer) =zakaznici;
     pid_t pid = fork();
     if(pid == 0){
         for(int i = 0; i < zakaznici; i++){
@@ -460,6 +471,7 @@ int main(int argc, char *argv[]) {
     usleep(open*1000); //usleep v milisekundách
     sem_wait(semafor);
     fprintf(file, "%d: closing\n", (*linecount)++);
+    fflush(file);
     sem_post(semafor);
     sem_post(q4);
     *otevreno = false;
