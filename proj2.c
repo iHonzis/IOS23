@@ -353,14 +353,25 @@ void urednik(int i, int random2){
                     (*customer)--;
                     }
                 }
-                if((*customer) == 0){
-                    break;
+
+            }
+            if((*customer) == 0){
+
+                    sem_wait(semafor);
+                    fprintf(file, "%d: U %d: taking break\n", (*linecount)++, i+1);
+                    sem_post(semafor);
+                    srand(time(NULL));
+                    int ceka = rand() % (prestavka+1);
+                    spanek(ceka);
+                    sem_wait(semafor);
+                    fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
+                    sem_post(semafor);
+                    break;//možná zakomentovat
                 }
-            }
 
             }
 
-            //TODO pauza
+            //TODO pauza, za finished ověřit?, odchod po konci
             sem_wait(q4);
             for(int i = (*officer); i > 0; i--){
                 sem_wait(semafor);
