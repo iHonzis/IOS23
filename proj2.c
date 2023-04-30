@@ -145,24 +145,16 @@ struct timeval cas;
 
 
 void zakaznik(int i, int random){
-            //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: Z %d: started\n", (*linecount)++, i+1);
             fflush(file);
             sem_post(semafor);
-
-            //struct timeval cas2;
-            //gettimeofday(&cas2, NULL);
-
-            //long int elapsed_time = (cas2.tv_sec - cas.tv_sec) * 1000 + (cas2.tv_usec - cas.tv_usec) / 1000; // calculate elapsed time in milliseconds
-
-
+        srand(time(NULL));
+            int ceka = rand() % (cekani+1);
+        spanek(ceka);
 
             if(*otevreno == true){
-                srand(time(NULL));
-            int ceka = rand() % (cekani+1);
 
-            spanek(ceka);
                     if(otevreno == false){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
@@ -285,7 +277,7 @@ void zakaznik(int i, int random){
             }
 }
 
-void urednik(int i, int random2){
+void urednik(int i){
             //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: U %d: started\n",(*linecount)++, i+1);
@@ -477,9 +469,8 @@ int main(int argc, char *argv[]) {
     else if(pid > 0){
         for(int i = 0; i < urednici; i++){
             pid_t ured = fork();
-            int random2 = rand()%3 + 1;
             if(ured == 0){
-                urednik(i, random2);
+                urednik(i);
                 exit(0);
             }
             else if(ured < 0){
