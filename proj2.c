@@ -16,7 +16,7 @@
 #include <sys/shm.h>
 #include <sys/time.h>
 
-//TODO přidat na konci -Werror do Makefile
+//TODO přidat na konci -Werror do Makefile + výpisy finished
 
 sem_t *semafor;
 sem_t *q1;
@@ -163,11 +163,12 @@ void zakaznik(int i, int random){
             }
 
                 if(random == 1){
+                    (*fr1)++;
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
                     sem_post(semafor);
-                    (*fr1)++;
+
                     sem_post(q1);
 
 
@@ -175,6 +176,7 @@ void zakaznik(int i, int random){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, i+1);
                     sem_post(semafor);
+                    (*fr1)--;
                     sem_post(qqq1);
                     int pockej = rand() % 10+1;
                     spanek(pockej);
@@ -184,14 +186,14 @@ void zakaznik(int i, int random){
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
                     fflush(file);
                     sem_post(semafor);
-                    (*fr1)--;
                 }
                 else if(random == 2){
+                    (*fr2)++;
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
                     sem_post(semafor);
-                    (*fr2)++;
+
                     sem_post(q2);
                     
 
@@ -199,6 +201,7 @@ void zakaznik(int i, int random){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, i+1);
                     sem_post(semafor);
+                    (*fr2)--;
                     sem_post(qqq2);
                     int pockej = rand() % 10+1;
                     spanek(pockej);
@@ -208,14 +211,14 @@ void zakaznik(int i, int random){
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
                     fflush(file);
                     sem_post(semafor);
-                    (*fr2)--;
                 }
                 else if(random == 3){
+                    (*fr3)++;
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
                     sem_post(semafor);
-                    (*fr3)++;
+
                     sem_post(q3);
 
 
@@ -233,7 +236,6 @@ void zakaznik(int i, int random){
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
                     fflush(file);
                     sem_post(semafor);
-                    (*fr3)--;
                 }
                 return;
             }
@@ -247,18 +249,14 @@ void zakaznik(int i, int random){
 }
 
 void urednik(int i){
-            //spanek(cekani);
             sem_wait(semafor);
             fprintf(file, "%d: U %d: started\n",(*linecount)++, i+1);
             fflush(file);
             sem_post(semafor);
 
-            while(true)//MBY něco s customers
+            while((*customer) != 0)//MBY něco s customers
             {
-                //nějaký začátek cyklu
-            //if (random2 == 1){
                 if(*fr1 > 0){
-                  //  if(*otevreno == true){
                     sem_wait(q1);
 
                     sem_post(qq1); //NEW
@@ -267,20 +265,16 @@ void urednik(int i){
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: serving a service of type 1\n",(*linecount)++, i+1);
                     sem_post(semafor);
+                    (*customer)--;
                     int pockej1 = rand() % 10+1;
                     spanek(pockej1);
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished-1\n", (*linecount)++, i+1);
                     sem_post(semafor);
-                    (*customer)--;
+
                     continue;
-                  //  }
                 }
-            //}
-            //else if(random2 == 2){
-                if(*fr2 > 0){
-                    //dvojka:
-                   // if (*otevreno == true){
+                else if(*fr2 > 0){
                     sem_wait(q2);
 
                     sem_post(qq2); //NEW
@@ -289,19 +283,16 @@ void urednik(int i){
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: serving a service of type 2\n",(*linecount)++, i+1);
                     sem_post(semafor);
+                    (*customer)--;
                     int pockej2 = rand() % 10+1;
                     spanek(pockej2);
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished-2\n", (*linecount)++, i+1);
                     sem_post(semafor);
-                    (*customer)--;
+
                     continue;
-                 //   }
                 }
-            //}
-            //else if(random2 == 3){
-                if(*fr3 > 0){
-                   // if (*otevreno == true){
+                else if(*fr3 > 0){
                     sem_wait(q3);
 
                     sem_post(qq3); //NEW
@@ -310,39 +301,40 @@ void urednik(int i){
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: serving a service of type 3\n",(*linecount)++, i+1);
                     sem_post(semafor);
+                    (*customer)--;
                     int pockej3 = rand() % 10+1;
                     spanek(pockej3);
                     sem_wait(semafor);
                     fprintf(file, "%d: U %d: service finished-3\n", (*linecount)++, i+1);
                     sem_post(semafor);
-                    (*customer)--;
+
                     continue;
                     //}
                 }
             //}
-            }
-            if(fr1 == 0 && fr2 == 0 && fr3 ==0 ){//možná z whilu ven
-                    sem_wait(semafor);
-                    fprintf(file, "%d: U %d: taking break\n", (*linecount)++, i+1);
-                    sem_post(semafor);
-                    srand(time(NULL));
-                    int ceka = rand() % (prestavka+1);
-                    spanek(ceka);
-                    sem_wait(semafor);
-                    fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
-                    sem_post(semafor);
-                    //možná zakomentovat, TODO fix
+            else {//(fr1 == 0 && fr2 == 0 && fr3 == 0 )//možná z whilu ven
+                    if(*otevreno == true){
+                                sem_wait(semafor);
+                                fprintf(file, "%d: U %d: taking break\n", (*linecount)++, i+1);
+                                sem_post(semafor);
+                                srand(time(NULL));
+                                int ceka = rand() % (prestavka+1);
+                                spanek(ceka);
+                                sem_wait(semafor);
+                                fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
+                                sem_post(semafor);
+                                continue;
+                                //možná zakomentovat, TODO fix
+                    }
                 }
-
-
+            }
 
             //TODO pauza, za finished ověřit?, odchod po konci
             sem_wait(q4);
-            for(int i = (*officer); i > 0; i--){
                 sem_wait(semafor);
-                fprintf(file, "%d: U %d: going home\n", (*linecount)++, i);
+                fprintf(file, "%d: U %d: going home-s\n", (*linecount)++, i+1);
             sem_post(semafor);
-            }
+
             sem_post(q4);
 }
 
