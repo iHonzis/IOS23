@@ -309,9 +309,7 @@ void urednik(int i){
                     sem_post(semafor);
 
                     continue;
-                    //}
                 }
-            //}
             else {//(fr1 == 0 && fr2 == 0 && fr3 == 0 )//možná z whilu ven
                     if(*otevreno == true){
                                 sem_wait(semafor);
