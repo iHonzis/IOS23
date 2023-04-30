@@ -499,6 +499,7 @@ int main(int argc, char *argv[]) {
     *otevreno = false;
 
         cleanup();
+        fclose(file);
         exit(0);
     }
     else if(pid < 0){
