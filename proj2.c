@@ -158,17 +158,14 @@ void zakaznik(int i, int random){
                     if(otevreno == false){
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                    //fflush(file);
+                    fflush(file);
                     sem_post(semafor);
             }
 
                 if(random == 1){
-                    if (*otevreno == true){
-                    //sem_wait(q1);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
-                    //fflush(file);
-                    //(*customer) = i+1;
+                    fflush(file);
                     sem_post(semafor);
                     (*fr1)++;
                     sem_post(q1);
@@ -185,24 +182,14 @@ void zakaznik(int i, int random){
 
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                    //fflush(file);
+                    fflush(file);
                     sem_post(semafor);
                     (*fr1)--;
-                    }
-                    else{
-                        sem_wait(semafor);
-                        fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                        //fflush(file);
-                        sem_post(semafor);
-                    }
                 }
                 else if(random == 2){
-                    if (*otevreno == true){
-                    //sem_wait(q2);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
-                    //(*customer) = i+1;
                     sem_post(semafor);
                     (*fr2)++;
                     sem_post(q2);
@@ -219,24 +206,14 @@ void zakaznik(int i, int random){
 
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                    //fflush(file);
+                    fflush(file);
                     sem_post(semafor);
                     (*fr2)--;
-                    }
-                    else{
-                        sem_wait(semafor);
-                        fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                        fflush(file);
-                        sem_post(semafor);
-                    }
                 }
                 else if(random == 3){
-                    if (*otevreno == true){
-                    //sem_wait(q3);
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: entering office for a service %d\n", (*linecount)++, i+1, random);
                     fflush(file);
-                    //(*customer) = i+1;
                     sem_post(semafor);
                     (*fr3)++;
                     sem_post(q3);
@@ -254,17 +231,9 @@ void zakaznik(int i, int random){
 
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                    //fflush(file);
+                    fflush(file);
                     sem_post(semafor);
-                    //(*fr3)--;
-
-                    }
-                    else{
-                        sem_wait(semafor);
-                        fprintf(file, "%d: Z %d: going home\n", (*linecount)++, i+1);
-                        fflush(file);
-                        sem_post(semafor);
-                    }
+                    (*fr3)--;
                 }
                 return;
             }
