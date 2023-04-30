@@ -1,5 +1,5 @@
 FILE=proj2
-CFLAGS=-std=gnu99 -Wall -Wextra -pedantic -pthread -g
+CFLAGS=-std=gnu99 -Wall -Wextra -Werror -pedantic -pthread -g
 RM=rm -f
 
 $(FILE) : $(FILE).c
