@@ -363,20 +363,6 @@ void urednik(int i){
                                 sem_wait(semafor);
                                 fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
                                 sem_post(semafor);
-
-                    if(*customer - *officer <= 1){
-                        if(*otevreno == true){
-                                sem_wait(semafor);
-                                fprintf(file, "%d: U %d: taking break\n", (*linecount)++, i+1);
-                                sem_post(semafor);
-                                srand(time(NULL));
-                                int ceka = rand() % (prestavka+1);
-                                spanek(ceka);
-                                sem_wait(semafor);
-                                fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
-                                sem_post(semafor);
-                        }
-                    }
                                 continue;
                     }
                 }
