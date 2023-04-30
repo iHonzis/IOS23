@@ -173,10 +173,11 @@ void zakaznik(int i, int random){
 
 
                     sem_wait(qq1);
+                    (*fr1)--;
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, i+1);
                     sem_post(semafor);
-                    (*fr1)--;
+
                     sem_post(qqq1);
                     int pockej = rand() % 10+1;
                     spanek(pockej);
@@ -198,10 +199,11 @@ void zakaznik(int i, int random){
                     
 
                     sem_wait(qq2);
+                    (*fr2)--;
+
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, i+1);
                     sem_post(semafor);
-                    (*fr2)--;
                     sem_post(qqq2);
                     int pockej = rand() % 10+1;
                     spanek(pockej);
@@ -223,10 +225,11 @@ void zakaznik(int i, int random){
 
 
                     sem_wait(qq3);
+                    (*fr3)--;
+
                     sem_wait(semafor);
                     fprintf(file, "%d: Z %d: called by office worker\n", (*linecount)++, i+1);
                     sem_post(semafor);
-                    (*fr3)--;
                     sem_post(qqq3);
                     int pockej = rand() % 10+1;
                     spanek(pockej);
@@ -310,6 +313,12 @@ void urednik(int i){
 
                     continue;
                 }
+                else if (*otevreno == false){
+
+                sem_wait(semafor);
+                fprintf(file, "%d: U %d: going home-x\n", (*linecount)++, i+1);
+                sem_post(semafor);
+                }
             else {//(fr1 == 0 && fr2 == 0 && fr3 == 0 )//možná z whilu ven
                     if(*otevreno == true){
                                 sem_wait(semafor);
@@ -321,6 +330,21 @@ void urednik(int i){
                                 sem_wait(semafor);
                                 fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
                                 sem_post(semafor);
+
+                    if(*customer - *officer <= 1){
+                        if(*otevreno == true){
+                                sem_wait(semafor);
+                                fprintf(file, "%d: U %d: taking break\n", (*linecount)++, i+1);
+                                sem_post(semafor);
+                                srand(time(NULL));
+                                int ceka = rand() % (prestavka+1);
+                                spanek(ceka);
+                                sem_wait(semafor);
+                                fprintf(file, "%d: U %d: break finished\n", (*linecount)++, i+1);
+                                sem_post(semafor);
+                        }
+                    }
+
                                 continue;
                                 //možná zakomentovat, TODO fix
                     }

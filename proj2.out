@@ -1,29 +1,55 @@
 1: U 1: started
 2: U 1: taking break
-3: Z 1: started
-4: Z 2: started
-5: Z 3: started
-6: Z 4: started
-7: Z 1: entering office for a service 1
-8: Z 2: entering office for a service 1
-9: Z 3: entering office for a service 1
-10: Z 4: entering office for a service 2
-11: U 1: break finished
-12: Z 1: called by office worker
-13: U 1: serving a service of type 1
-14: Z 1: going home
-15: U 1: service finished-1
-16: Z 2: called by office worker
-17: U 1: serving a service of type 1
-18: Z 2: going home
-19: U 1: service finished-1
-20: Z 3: called by office worker
-21: U 1: serving a service of type 1
-22: Z 3: going home
-23: U 1: service finished-1
-24: Z 4: called by office worker
-25: U 1: serving a service of type 2
-26: Z 4: going home
-27: U 1: service finished-2
-28: closing
-29: U 1: going home-s
+3: U 2: started
+4: U 2: taking break
+5: Z 1: started
+6: U 3: started
+7: U 3: taking break
+8: Z 2: started
+9: Z 3: started
+10: U 4: started
+11: U 4: taking break
+12: U 5: started
+13: Z 4: started
+14: U 5: taking break
+15: Z 1: entering office for a service 3
+16: Z 2: entering office for a service 3
+17: Z 3: entering office for a service 1
+18: Z 4: entering office for a service 3
+19: U 1: break finished
+20: U 1: taking break
+21: U 2: break finished
+22: U 3: break finished
+23: U 2: taking break
+24: U 3: taking break
+25: U 4: break finished
+26: U 4: taking break
+27: U 5: break finished
+28: U 5: taking break
+29: U 1: break finished
+30: Z 3: called by office worker
+31: U 1: serving a service of type 1
+32: U 2: break finished
+33: U 3: break finished
+34: Z 1: called by office worker
+35: Z 2: called by office worker
+36: U 2: serving a service of type 3
+37: U 3: serving a service of type 3
+38: U 4: break finished
+39: Z 4: called by office worker
+40: U 4: serving a service of type 3
+41: Z 3: going home
+42: U 1: service finished-1
+43: U 5: break finished
+44: Z 1: going home
+45: U 3: service finished-3
+46: Z 2: going home
+47: U 2: service finished-3
+48: Z 4: going home
+49: U 4: service finished-3
+50: closing
+51: U 1: going home-s
+52: U 5: going home-s
+53: U 3: going home-s
+54: U 2: going home-s
+55: U 4: going home-s
